@@ -1,0 +1,61 @@
+root@LAPTOP-G691VBJA:/mnt/c/Users/97254/orgchart-b# bash grade
+--- 0 seconds
+
+
+### Cleaning old files (to prevent this, export DEBUG=1) ###
+rm -f objects/OrgChart.o *.o test* 
+rm -f StudentTest*.cpp
+
+
+### Check 3: all tests should pass
+! make -f Makefile test
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile TestRunner.cpp -o TestRunner.o
+curl https://raw.githubusercontent.com/renanarimon/cpp_5b_test/master/Test.cpp > StudentTest1.cpp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  5001  100  5001    0     0   8789      0 --:--:-- --:--:-- --:--:--  8789
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest1.cpp -o StudentTest1.o
+curl https://raw.githubusercontent.com/ShauliTaragin/Orgchart-A/main/Test.cpp > StudentTest2.cpp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15313  100 15313    0     0  25649      0 --:--:-- --:--:-- --:--:-- 25607
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest2.cpp -o StudentTest2.o
+curl https://raw.githubusercontent.com/dvirGev/CPP--Ex5-par1/main/Test.cpp > StudentTest3.cpp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 18625  100 18625    0     0  24933      0 --:--:-- --:--:-- --:--:-- 24899
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest3.cpp -o StudentTest3.o
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile sources/OrgChart.cpp -o objects/OrgChart.o
+clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources TestRunner.o StudentTest1.o StudentTest2.o StudentTest3.o objects/OrgChart.o -o test
+! timeout 60 ./test
+[doctest] doctest version is "2.3.7"
+[doctest] run with "--help" for options
+New_Owner
+General_Manager   Share_Holders   Head_of_operations
+Head_Coach   Assistant_Coach   Sub_Share_Holder1   Sub_Share_Holder2   Team_Doctor   Head_Scout       
+Captain   Water_Boy   Team_Physiotherapist
+
+===============================================================================
+[doctest] test cases:     15 |     15 passed |      0 failed |      0 skipped
+[doctest] assertions:    716 |    716 passed |      0 failed |
+[doctest] Status: SUCCESS!
+--- 7 seconds
+### Score 3: 100
+
+
+### Check 4: clang-tidy should run without warnings in user code
+! timeout 60 make -f Makefile tidy
+clang-tidy sources/OrgChart.cpp -extra-arg=-std=c++2a -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=* --
+--- 8 seconds
+### Score 4: 100
+
+
+### Check 5: valgrind should run without errors
+! timeout 60 make -f Makefile valgrind
+valgrind --tool=memcheck -v --leak-check=full --show-leak-kinds=all  --error-exitcode=99 ./test 2>&1 | { egrep "lost| at " || true; }
+==8322==     in use at exit: 0 bytes in 0 blocks
+--- 10 seconds
+### Score 5: 100
+
+
+Grade: 100
