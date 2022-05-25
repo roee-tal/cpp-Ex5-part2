@@ -4,9 +4,8 @@
 using namespace ariel;
 using namespace std;
 
-TEST_CASE ("Case 2 Football Team")
+TEST_CASE ("Case 1 - string")
 {
-    //checking string
     OrgChart<string> organization;
             CHECK_NOTHROW(organization.add_root("CEO"));
             CHECK_NOTHROW(organization.add_sub("CEO" , "CTO"));//Owner was replaced
@@ -47,10 +46,12 @@ TEST_CASE ("Case 2 Football Team")
             CHECK_EQ(l_order.at(11),"ENGINEER");
             l_order.clear();
 
-            //add another field and check that it works
+            //add another field 
             CHECK_NOTHROW(organization.add_sub("EMPLOYEE" , "SUB_EMPLOYEE"));
+            //add root
             CHECK_NOTHROW(organization.add_root("NEW_CEO"));
              cout << organization << endl;
+
             //check default iterator
             for (auto name:organization)
             {
@@ -91,7 +92,6 @@ TEST_CASE ("Case 2 Football Team")
             CHECK_EQ(r_order.at(11),"COO");
             CHECK_EQ(r_order.at(12),"NEW_CEO");
 
-            // Change root check that still works
             
 
             //test preorder
@@ -118,7 +118,6 @@ TEST_CASE ("Case 2 Football Team")
 
 TEST_CASE ("Case 2 CS Depatrment")
 {
-    //create object person for this test
     class Person {
     public:
         string name;
@@ -130,6 +129,7 @@ TEST_CASE ("Case 2 CS Depatrment")
             return this->name == p.name;
         }
     };
+
     //instantiate People
     Person Head_Of_Department("Boaz", 50);
     Person Course_manager_algo("Elad", 45);
@@ -139,82 +139,82 @@ TEST_CASE ("Case 2 CS Depatrment")
     Person Excerciser_Algo("Edut", 22);
     Person Excerciser_CPP("Tal", 23);
 
-    OrgChart<Person> Depatrment;
-            CHECK_NOTHROW(Depatrment.add_root(Head_Of_Department));
-            CHECK_NOTHROW(Depatrment.add_sub(Head_Of_Department, Course_manager_algo));
-            CHECK_NOTHROW(Depatrment.add_sub(Head_Of_Department, Course_manager_CPP));
-            CHECK_NOTHROW(Depatrment.add_sub(Course_manager_CPP, Lecturer_CPP));
-            CHECK_NOTHROW(Depatrment.add_sub(Course_manager_algo, Lecturer_Algo));
-            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_Algo, Excerciser_Algo));
-            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_CPP, Excerciser_CPP));
+    OrgChart<string> Depatrment;
+            CHECK_NOTHROW(Depatrment.add_root(Head_Of_Department.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Head_Of_Department.name, Course_manager_algo.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Head_Of_Department.name, Course_manager_CPP.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Course_manager_CPP.name, Lecturer_CPP.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Course_manager_algo.name, Lecturer_Algo.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_Algo.name, Excerciser_Algo.name));
+            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_CPP.name, Excerciser_CPP.name));
 
     // test level order
-    vector<Person> lvl_order;
+    vector<string> lvl_order;
     for (auto it = Depatrment.begin_level_order(); it != Depatrment.end_level_order(); ++it) {
         lvl_order.push_back(*it);
     }
-            CHECK_EQ(lvl_order.at(0).name, Head_Of_Department.name);
-            CHECK_EQ(lvl_order.at(1).name, Course_manager_algo.name);
-            CHECK_EQ(lvl_order.at(2).name, Course_manager_CPP.name);
-            CHECK_EQ(lvl_order.at(3).name, Lecturer_Algo.name);
-            CHECK_EQ(lvl_order.at(4).name, Lecturer_CPP.name);
-            CHECK_EQ(lvl_order.at(5).name, Excerciser_Algo.name);
-            CHECK_EQ(lvl_order.at(6).name, Excerciser_CPP.name);
+            CHECK_EQ(lvl_order.at(0), Head_Of_Department.name);
+            CHECK_EQ(lvl_order.at(1), Course_manager_algo.name);
+            CHECK_EQ(lvl_order.at(2), Course_manager_CPP.name);
+            CHECK_EQ(lvl_order.at(3), Lecturer_Algo.name);
+            CHECK_EQ(lvl_order.at(4), Lecturer_CPP.name);
+            CHECK_EQ(lvl_order.at(5), Excerciser_Algo.name);
+            CHECK_EQ(lvl_order.at(6), Excerciser_CPP.name);
 
 
     lvl_order.clear();
     //add another field and check that it works
     Person Excerciser_Algo2("Nir", 25);
-            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_Algo, Excerciser_Algo2));
+            CHECK_NOTHROW(Depatrment.add_sub(Lecturer_Algo.name, Excerciser_Algo2.name));
     // Change root check that still works
     Person New_H_O_D("Yossi", 60);
-            CHECK_NOTHROW(Depatrment.add_root(New_H_O_D));
+            CHECK_NOTHROW(Depatrment.add_root(New_H_O_D.name));
 
     //check default iterator
     for (auto person: Depatrment) {
         lvl_order.push_back(person);
     }
-            CHECK_EQ(lvl_order.at(0).name, New_H_O_D.name);
-            CHECK_EQ(lvl_order.at(1).name, Course_manager_algo.name);
-            CHECK_EQ(lvl_order.at(2).name, Course_manager_CPP.name);
-            CHECK_EQ(lvl_order.at(3).name, Lecturer_Algo.name);
-            CHECK_EQ(lvl_order.at(4).name, Lecturer_CPP.name);
-            CHECK_EQ(lvl_order.at(5).name, Excerciser_Algo.name);
-            CHECK_EQ(lvl_order.at(7).name, Excerciser_CPP.name);
-            CHECK_EQ(lvl_order.at(6).name, Excerciser_Algo2.name);
+            CHECK_EQ(lvl_order.at(0), New_H_O_D.name);
+            CHECK_EQ(lvl_order.at(1), Course_manager_algo.name);
+            CHECK_EQ(lvl_order.at(2), Course_manager_CPP.name);
+            CHECK_EQ(lvl_order.at(3), Lecturer_Algo.name);
+            CHECK_EQ(lvl_order.at(4), Lecturer_CPP.name);
+            CHECK_EQ(lvl_order.at(5), Excerciser_Algo.name);
+            CHECK_EQ(lvl_order.at(7), Excerciser_CPP.name);
+            CHECK_EQ(lvl_order.at(6), Excerciser_Algo2.name);
 
 
 
     // test reverse level order
-    vector<Person> r_order;
+    vector<string> r_order;
     for (auto it = Depatrment.begin_reverse_order(); it != Depatrment.reverse_order(); ++it) {
         r_order.push_back(*it);
     }
-            CHECK_EQ(r_order.at(0).name, Excerciser_Algo.name);
-            CHECK_EQ(r_order.at(1).name, Excerciser_Algo2.name);
-            CHECK_EQ(r_order.at(2).name, Excerciser_CPP.name);
-            CHECK_EQ(r_order.at(3).name, Lecturer_Algo.name);
-            CHECK_EQ(r_order.at(4).name, Lecturer_CPP.name);
-            CHECK_EQ(r_order.at(5).name, Course_manager_algo.name);
-            CHECK_EQ(r_order.at(6).name, Course_manager_CPP.name);
-            CHECK_EQ(r_order.at(7).name, New_H_O_D.name);
+            CHECK_EQ(r_order.at(0), Excerciser_Algo.name);
+            CHECK_EQ(r_order.at(1), Excerciser_Algo2.name);
+            CHECK_EQ(r_order.at(2), Excerciser_CPP.name);
+            CHECK_EQ(r_order.at(3), Lecturer_Algo.name);
+            CHECK_EQ(r_order.at(4), Lecturer_CPP.name);
+            CHECK_EQ(r_order.at(5), Course_manager_algo.name);
+            CHECK_EQ(r_order.at(6), Course_manager_CPP.name);
+            CHECK_EQ(r_order.at(7), New_H_O_D.name);
 
 
 
 
     //test preorder
-    vector<Person> pre_order;
+    vector<string> pre_order;
     for (auto it = Depatrment.begin_preorder(); it != Depatrment.end_preorder(); ++it) {
         pre_order.push_back(*it);
     }
-            CHECK_EQ(pre_order.at(0).name, New_H_O_D.name);
-            CHECK_EQ(pre_order.at(1).name, Course_manager_algo.name);
-            CHECK_EQ(pre_order.at(2).name, Lecturer_Algo.name);
-            CHECK_EQ(pre_order.at(3).name, Excerciser_Algo.name);
-            CHECK_EQ(pre_order.at(4).name, Excerciser_Algo2.name);
-            CHECK_EQ(pre_order.at(5).name, Course_manager_CPP.name);
-            CHECK_EQ(pre_order.at(6).name, Lecturer_CPP.name);
-            CHECK_EQ(pre_order.at(7).name, Excerciser_CPP.name);
+            CHECK_EQ(pre_order.at(0), New_H_O_D.name);
+            CHECK_EQ(pre_order.at(1), Course_manager_algo.name);
+            CHECK_EQ(pre_order.at(2), Lecturer_Algo.name);
+            CHECK_EQ(pre_order.at(3), Excerciser_Algo.name);
+            CHECK_EQ(pre_order.at(4), Excerciser_Algo2.name);
+            CHECK_EQ(pre_order.at(5), Course_manager_CPP.name);
+            CHECK_EQ(pre_order.at(6), Lecturer_CPP.name);
+            CHECK_EQ(pre_order.at(7), Excerciser_CPP.name);
 
 
 }
@@ -225,6 +225,8 @@ TEST_CASE("Utilities"){
        OrgChart organization;
        //Adding sub when tree is empty
        CHECK_THROWS(organization.add_sub("CEO", "CTO"));
+        //Adding empty root
+       CHECK_THROWS(organization.add_root(""));
 
        organization.add_root("CEO")
       .add_sub("CEO", "CTO")         // Now the CTO is subordinate to the CEO
@@ -245,18 +247,20 @@ TEST_CASE("Utilities"){
     CHECK_THROWS(organization.add_sub("CPO", "CPPO"));
     CHECK_THROWS(organization.add_sub("CLO", "CL"));
 
+    //Adding empty sub
+    CHECK_THROWS(organization.add_sub("CEO", ""));
       
       //Check for implementation of begin() and end()
       CHECK_NOTHROW(for(auto str: organization));
 
       //Check arrow operator
-      size_t combinedLen = 0;
+      size_t combined = 0;
       for(auto it = organization.begin(); it != organization.end(); ++it){
 
-          combinedLen += it->length();
+          combined += it->length();
       }
 
-      CHECK_EQ(combinedLen, 26);
+      CHECK_EQ(combined, 26);
 
         //Check for empty tree
          OrgChart org;

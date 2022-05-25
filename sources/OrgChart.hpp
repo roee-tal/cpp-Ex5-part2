@@ -7,9 +7,11 @@
 #include <fstream>
 #include <sstream>
 namespace ariel{
-    template <class T> class Iterator;
     template<class T=std::string>
+
     class OrgChart{
+                        /*----------Node-----------*/
+
         struct Node{
             T data;
             std::vector<Node*>childs;
@@ -17,44 +19,10 @@ namespace ariel{
             Node(T &data):data(data) {                
             }
         };
-
-        public:
-            Node *head;
-            std::deque<Node*>to_del;
-
-
-        OrgChart(){
-             this->head= nullptr;
-        }
-
-        OrgChart(OrgChart &other);
-        // {
-        //     this->head = other.head;
-        // }
-        OrgChart(OrgChart &&other)noexcept;
-        // {
-        //     this->head = other.head;
-        //     other.head = nullptr;
-        // }
-        OrgChart &operator=(OrgChart other);
-        // {
-        //     // if(other.head == nullptr){
-        //     //     std::cout<<"dsa";
-        //     // }
-        //     this->head = other.head;
-        //     return *this;
-        // }
-        OrgChart &operator=(OrgChart &&other) noexcept;
-        // {
-        //     this->head = other.head;
-        //     other.head = nullptr;
-        //     return *this;
-        // }
-        ~OrgChart(){
-            del_nodes(head);
-        }
-
-
+                        /*-----OrgChart operations-----*/
+        
+        Node *head;
+        std::deque<Node*>to_del;
 
         //Destructor - first fill the deque to delete - then delete each node
         void del_nodes(Node *head){
@@ -75,8 +43,78 @@ namespace ariel{
         }
     }
 
+        static std::string print( Node *node, std::string space,bool first) {
+            std::string s;
+            if(first){
+                s+="root: ";
+            }
+            s+= space + "$ " + node->data +"\n";
+            if(first){
+                space+="         ";
+            }
+            else{
+                space+="   ";
+            }
+            for (size_t i = 0; i < node->childs.size(); i++) {
+                s+=print(node->childs[i],space,false);
+            }
+            return s;
+        }
+
+       void empty_word(T word){
+            if(word == ""){
+                throw std::runtime_error("The cannot enter empty name");
+            }
+        }
+
+    public:
+
+        OrgChart(){
+             this->head= nullptr;
+        }
+        //copy constructor
+        OrgChart(OrgChart &other)
+        {
+            this->head = other.head;
+        }
+        
+        //Move constructor - copy the object and nulling out the pointer to the temporary data
+        OrgChart(OrgChart &&other)noexcept
+        {
+            this->head = other.head;
+            other.head = nullptr;
+        }
+
+        //Copy assigment operator - create a new object from an existing one by initialization
+        OrgChart &operator=(OrgChart other)
+        {
+        if (other != this)
+        {
+            this->head = other.head;
+        }
+
+        return *this;
+        }
+
+        OrgChart &operator=(OrgChart &&other) noexcept
+        {
+        if (other != this){
+            this->head = other.head;
+            other.head = nullptr;
+            return *this;
+            }
+        }
+
+        //Destructor
+        ~OrgChart(){
+            del_nodes(head);
+        }
+
+
+
         //Add root - if there is no root - create new node to be the root, else - replace the root 
         OrgChart& add_root(T job){
+            empty_word(job); //Check no empty root name
             if(head == nullptr){
                 this->head = new Node(job);
             }
@@ -90,6 +128,7 @@ namespace ariel{
         // Add sub - Insert each node to deque and check if the bos name is equal to the curr node
         // If isnt exist - exception
         OrgChart & add_sub(T bos,T sub){
+            empty_word(sub);//Check no empty sub name
             if(head == nullptr){
                 throw std::runtime_error("The boss name doesn't exist");
             }
@@ -110,38 +149,16 @@ namespace ariel{
             throw std::runtime_error("The boss name doesn't exist"); //If bos name doesnt exist
         }
 
+ 
 
-    friend std::ostream &operator<<(std::ostream &out, const OrgChart &org)
-    {
-        std::deque<OrgChart::Node *> q;
-        if (!org.head)
-        {
-            throw std::out_of_range("OrgChart is empty");
-        }
-        q.push_back(org.head);
-        while (!q.empty())
-        {
-            size_t len = q.size();
-            for (size_t i = 0; i < len; i++)
-            {
-                OrgChart::Node *tmp = q.front();
-                out << tmp->data << "   ";
-                if (!tmp->childs.empty())
-                {
-                    for (OrgChart::Node *child : tmp->childs)
-                    {
-                        q.push_back(child);
-                    }
-                }
-                q.pop_front();
-            }
-            out << "\n";
+        friend std::ostream &operator<<(std::ostream &output, const OrgChart &org) {
+            output<<print(org.head, "",true);
+            return output;
         }
 
-        return out;
-    }
 
-        
+
+                    /*------Iterator inner class-------*/
 
 		class iterator{
             //L - level order
@@ -151,7 +168,7 @@ namespace ariel{
 			Node *curr;
 			std::deque<Node*> traverse2;
             std::deque<Node*> traverse_help;
-			public:
+		public:
 
             // Constructor - the iterator gets also char (flag) to know what order we need to iterate over the nodes
 			iterator(Node* ptr,const char& c)
@@ -198,6 +215,7 @@ namespace ariel{
         // }
         }
 
+        // Fill reverse iterative
 		 void fill_rev_order(Node *head, unsigned int index){
             if(head==nullptr){
                throw std::runtime_error("The boss name doesn't exist");
@@ -216,7 +234,7 @@ namespace ariel{
             
         }
                 
-
+        // Use recursion for preorder
 		void fill_preorder(Node *head){
         if(head!=nullptr){
              for(size_t i=0;i<head->childs.size();i++){
@@ -228,6 +246,7 @@ namespace ariel{
                throw std::runtime_error("The boss name doesn't exist");
             }
          }
+         
 		bool operator==(const iterator&it)const{
                 return this->curr == it.curr;
             }
@@ -264,6 +283,7 @@ namespace ariel{
             }
 		};
 
+                    /*---Done iterator class - begin the iterator---*/
 
 			iterator begin_level_order(){
 				return iterator{head,'L'};
@@ -284,6 +304,7 @@ namespace ariel{
                 return end_it();
 			}
 
+            //Help function for all 'end' iterators
             iterator end_it(){
                  if (this->head == nullptr) {
                         throw std::runtime_error("Chart is empty!");
