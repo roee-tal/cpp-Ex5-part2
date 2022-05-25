@@ -13,48 +13,71 @@ clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile TestRunner.cp
 curl https://raw.githubusercontent.com/renanarimon/cpp_5b_test/master/Test.cpp > StudentTest1.cpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100  5001  100  5001    0     0   8789      0 --:--:-- --:--:-- --:--:--  8789
+100  5004  100  5004    0     0  11691      0 --:--:-- --:--:-- --:--:-- 11718
 clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest1.cpp -o StudentTest1.o
 curl https://raw.githubusercontent.com/ShauliTaragin/Orgchart-A/main/Test.cpp > StudentTest2.cpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100 15313  100 15313    0     0  25649      0 --:--:-- --:--:-- --:--:-- 25607
+100 11779  100 11779    0     0  29228      0 --:--:-- --:--:-- --:--:-- 29155
 clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest2.cpp -o StudentTest2.o
 curl https://raw.githubusercontent.com/dvirGev/CPP--Ex5-par1/main/Test.cpp > StudentTest3.cpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100 18625  100 18625    0     0  24933      0 --:--:-- --:--:-- --:--:-- 24899
+100 18625  100 18625    0     0  49534      0 --:--:-- --:--:-- --:--:-- 49534
 clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile StudentTest3.cpp -o StudentTest3.o
 clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources --compile sources/OrgChart.cpp -o objects/OrgChart.o
 clang++-9 -std=c++2a -Werror -Wsign-conversion -Isources TestRunner.o StudentTest1.o StudentTest2.o StudentTest3.o objects/OrgChart.o -o test
 ! timeout 60 ./test
 [doctest] doctest version is "2.3.7"
 [doctest] run with "--help" for options
-New_Owner
-General_Manager   Share_Holders   Head_of_operations
-Head_Coach   Assistant_Coach   Sub_Share_Holder1   Sub_Share_Holder2   Team_Doctor   Head_Scout       
-Captain   Water_Boy   Team_Physiotherapist
+root: $ GreatGrandma
+         $ GrandFather
+            $ Father
+               $ Son
+               $ Daughter
+            $ Uncle
+               $ Cousin
+            $ Aunt
+               $ Cousin2
+         $ GreatUncle
+
+root: $ New_Owner
+         $ General_Manager
+            $ Head_Coach
+               $ Captain
+            $ Assistant_Coach
+               $ Water_Boy
+         $ Share_Holders
+            $ Sub_Share_Holder1
+            $ Sub_Share_Holder2
+         $ Head_of_operations
+            $ Team_Doctor
+               $ Team_Physiotherapist
+            $ Head_Scout
 
 ===============================================================================
-[doctest] test cases:     15 |     15 passed |      0 failed |      0 skipped
-[doctest] assertions:    716 |    716 passed |      0 failed |
+[doctest] test cases:     14 |     14 passed |      0 failed |      0 skipped
+[doctest] assertions:    659 |    659 passed |      0 failed |
 [doctest] Status: SUCCESS!
---- 7 seconds
+--- 10 seconds
 ### Score 3: 100
 
 
 ### Check 4: clang-tidy should run without warnings in user code
 ! timeout 60 make -f Makefile tidy
-clang-tidy sources/OrgChart.cpp -extra-arg=-std=c++2a -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=* --
---- 8 seconds
+clang-tidy sources/OrgChart.cpp sources/OrgChart.hpp -extra-arg=-std=c++2a -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=* --
+4525 warnings generated.
+Suppressed 4525 warnings (4525 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+--- 13 seconds
 ### Score 4: 100
 
 
 ### Check 5: valgrind should run without errors
 ! timeout 60 make -f Makefile valgrind
 valgrind --tool=memcheck -v --leak-check=full --show-leak-kinds=all  --error-exitcode=99 ./test 2>&1 | { egrep "lost| at " || true; }
-==8322==     in use at exit: 0 bytes in 0 blocks
---- 10 seconds
+==28816==     in use at exit: 0 bytes in 0 blocks
+--- 14 seconds
 ### Score 5: 100
 
 
